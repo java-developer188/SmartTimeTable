@@ -15,5 +15,7 @@ public class SmartSchedulerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartSchedulerApplication.class, args);
+//		AutomaticFetcher automaticFetcher = new AutomaticFetcher();
+//		automaticFetcher.execute();
 	}
 }

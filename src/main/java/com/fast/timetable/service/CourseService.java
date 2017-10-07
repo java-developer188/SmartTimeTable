@@ -32,7 +32,7 @@ public class CourseService {
 	protected static final String PROP_FILE = "config.properties";
 	private static final String KEY_CLEAN_FILE = "CLEAN_DATA_FILENAME";
 	private static final int SHEET_INDEX = 0;
-	private static final String COLUMN_HEADING = "Column2";
+	private static final String COLUMN_HEADING = "Column";
 
 	private static final int COURSE_CODE = 2;
 	private static final int FULLNAME = 3;
@@ -78,7 +78,7 @@ public class CourseService {
 															// cell for now
 			if (cell != null && cell.getCellTypeEnum().equals(CellType.STRING)) {
 				String value = cell.getStringCellValue();
-				if (!value.equals(COLUMN_HEADING)) {
+				if (!value.contains(COLUMN_HEADING)) {
 
 					Course course = new Course();
 					course.setCode(currentRow.getCell(COURSE_CODE) != null

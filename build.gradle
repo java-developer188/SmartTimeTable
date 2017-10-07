@@ -29,4 +29,5 @@ dependencies {
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.apache.poi:poi-ooxml:3.16')
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 }

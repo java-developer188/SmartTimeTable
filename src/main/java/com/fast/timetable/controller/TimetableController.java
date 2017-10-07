@@ -136,6 +136,36 @@ public class TimetableController {
 			return "JSON Processing error";
 		}
 	}
+	
+	@RequestMapping(path = "/partial", method = RequestMethod.GET)
+	public String partial() {
+		long entry = System.currentTimeMillis();
+		HashMap<String, Object> response = new HashMap<>();
+		ObjectMapper m = new ObjectMapper();
+		try {
+				
+				DaySheetParser daySheetParser = new DaySheetParser(courseService.getAll(), teacherService.getAll());
+				daySheetParser.execute();
+				
+				
+				timeTableService.save();
+				response.put("Result", "System re-Initialized Successfully");
+
+		} catch (Exception e) {
+
+			response.put("resultcode", "INVALID_ARGUMENT");
+			response.put("resultdescription", e.getMessage());
+
+		} finally {
+			long exit = System.currentTimeMillis();
+		}
+		try {
+			return m.writeValueAsString(response);
+		} catch (JsonProcessingException e) {
+			return "JSON Processing error";
+		}
+	}
+	
 
 	/**
 	 * Controller to call Category page service.
