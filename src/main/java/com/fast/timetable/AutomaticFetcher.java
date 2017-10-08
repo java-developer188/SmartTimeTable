@@ -8,15 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class AutomaticFetcher {
 	private final String CONFIG_FILE = "config.properties";
@@ -28,6 +32,7 @@ public class AutomaticFetcher {
 	private int currentInterval = 0, totalInterval = 0;
 	private Date intervalStart, intervalEnd;
 	private boolean onlyOnce = true;
+	private final String URL = "http://localhost:8088/";
 
 	public AutomaticFetcher() {
 		try {
@@ -64,17 +69,26 @@ public class AutomaticFetcher {
 
 			@Override
 			public void run() {
+				ExecuteShellComand shellCommand = new ExecuteShellComand();
 				System.out.println("Executing run(): " + DATE_FORMAT.format(Calendar.getInstance().getTime()));
 				String fromFile = "https://drive.google.com/uc?export=download&id=0BxVBN-pWNf_rc1NBck94QzlkR0E";
 				String toFile = "/home/sshaider/FypMs/DataCleaning/input/BSCS.xlsx";
 				try {
 					// connectionTimeout, readTimeout = 10 seconds
-					FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
+					
 					if (onlyOnce) {
 						// initialize system
+						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
+						shellCommand.executeOpenRefineScript();
+						String url = URL +"init?value=true";
+						callController(url,null);
 						System.out.println("initialize system");
 					} else {
 						// regenerate timetable only
+						shellCommand.executePartialSchemaScript();
+						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
+						String url = URL +"partial";
+						callController(url,null);
 						System.out.println("regenerate timetable only");
 					}
 
@@ -86,6 +100,19 @@ public class AutomaticFetcher {
 			}
 		};
 		return fetcher;
+	}
+	
+	
+	
+	
+	private boolean callController(String url,Map params){
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<Map<String,Object>> request = new HttpEntity<>(params);
+		ResponseEntity<String> response = restTemplate
+		  .exchange(url, HttpMethod.GET, request, String.class);
+		  
+		return response.getStatusCode() == HttpStatus.OK;
+
 	}
 
 	/**
@@ -105,8 +132,9 @@ public class AutomaticFetcher {
 				System.out.println("Interval " + currentInterval + " will End at :" + intervalEnd);
 
 				int numberOfhours = Integer.parseInt(prop.getProperty("Value_" + currentInterval));
-				System.out.println("Interval " + currentInterval + " fetches file every " + numberOfhours + " hours.");
-
+				//System.out.println("Interval " + currentInterval + " fetches file every " + numberOfhours + " hours.");
+				System.out.println("Interval " + currentInterval + " fetches file every " + numberOfhours + " seconds.");
+				
 				if (numberOfhours > 0) {
 					if (futureTask != null) {
 						futureTask.cancel(true);

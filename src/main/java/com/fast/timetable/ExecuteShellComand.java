@@ -27,11 +27,11 @@ public class ExecuteShellComand {
 	}
 	
 	public void executeCompleteSchemaScript(){
-		executeScripts("./schemaRunBashScript.sh");
+		executeScripts("./fullInitializeScript.sh");
 	}
 	
 	public void executePartialSchemaScript(){
-		executeScripts("./schemaRunBashScript.sh");
+		executeScripts("./partialInitializeScript.sh");
 	}
 	
 	public void executeScripts(String scriptPath){

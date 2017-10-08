@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fast.timetable.AutomaticFetcher;
 import com.fast.timetable.DaySheetParser;
 import com.fast.timetable.entity.Course;
 import com.fast.timetable.entity.CourseSectionTeacher;
@@ -93,9 +94,47 @@ public class TimetableController {
 			return "JSON Processing error";
 		}
 	}
+	
+	
+	
+	/**
+	 * To initialize system from scratch.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/start", method = RequestMethod.GET)
+	public String start() {
+
+		long entry = System.currentTimeMillis();
+		HashMap<String, Object> response = new HashMap<>();
+		ObjectMapper m = new ObjectMapper();
+		try {
+			
+				AutomaticFetcher automaticFetcher = new AutomaticFetcher();
+				automaticFetcher.execute();
+				response.put("Result", "System Started");
+			
+		} catch (Exception e) {
+
+			response.put("resultcode", "INVALID_ARGUMENT");
+			response.put("resultdescription", e.getMessage());
+
+		} finally {
+			long exit = System.currentTimeMillis();
+		}
+		try {
+			return m.writeValueAsString(response);
+		} catch (JsonProcessingException e) {
+			return "JSON Processing error";
+		}
+	
+	}
+	
 
 	/**
-	 * Controller to call Category page service.
+	 * To initialize system from scratch.
 	 * 
 	 * @param request
 	 * @param httpreq
@@ -295,47 +334,4 @@ public class TimetableController {
 		}
 	}
 	
-	
-	/**
-	 * Controller to call Category page service.
-	 * 
-	 * @param request
-	 * @param httpreq
-	 * @return
-	 */
-	@RequestMapping(path = "/student", method = { RequestMethod.GET, RequestMethod.POST })
-	public String student(@RequestBody HashMap<String, String> map) {
-		long entry = System.currentTimeMillis();
-		HashMap<String, Object> response = new HashMap<>();
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			if (map.containsKey("id")) {
-				Long id = Long.valueOf(map.get("id"));
-				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
-				response.put("TimeTable", mapper.writeValueAsString(result));
-				response.put("TimeTableCount", result.size());
-				response.put("result", "SUCCESS");
-			} else {
-				// List<Teacher> result = teacherService.getTeachers();
-				// response.put("Teachers", mapper.writeValueAsString(result));
-				// response.put("TeacherCount", result.size());
-				// response.put("result", "SUCCESS");
-			}
-		} catch (Exception e) {
-			response.put("result", "ERROR");
-			response.put("errorDescription", e.getMessage());
-
-		} finally {
-			long exit = System.currentTimeMillis();
-		}
-		try {
-			return mapper.writeValueAsString(response);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"JSON Processing Error\"}";
-		} catch (NumberFormatException nfe) {
-			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
-		}
-	}
-
 }
