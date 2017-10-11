@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fast.timetable.pojo.StudentPojo;
 import com.fast.timetable.repository.CourseRepository;
 import com.fast.timetable.repository.CourseSectionTeacherRepository;
 import com.fast.timetable.repository.TeacherRepository;
@@ -63,23 +64,25 @@ public class StudentController {
 	 * @return
 	 */
 	@RequestMapping(path = "/register", method = { RequestMethod.GET, RequestMethod.POST })
-	public String register(@RequestBody HashMap<String, String> map) {
+	public String register(@RequestBody StudentPojo studentPojo) {
+		
 		long entry = System.currentTimeMillis();
 		HashMap<String, Object> response = new HashMap<>();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if (map.containsKey("id")) {
-				Long id = Long.valueOf(map.get("id"));
-				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
-				response.put("TimeTable", mapper.writeValueAsString(result));
-				response.put("TimeTableCount", result.size());
-				response.put("result", "SUCCESS");
-			} else {
-				// List<Teacher> result = teacherService.getTeachers();
-				// response.put("Teachers", mapper.writeValueAsString(result));
-				// response.put("TeacherCount", result.size());
-				// response.put("result", "SUCCESS");
-			}
+			System.out.println(studentPojo);
+//			if (map.containsKey("id")) {
+//				Long id = Long.valueOf(map.get("id"));
+//				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
+//				response.put("TimeTable", mapper.writeValueAsString(result));
+//				response.put("TimeTableCount", result.size());
+//				response.put("result", "SUCCESS");
+//			} else {
+//				// List<Teacher> result = teacherService.getTeachers();
+//				// response.put("Teachers", mapper.writeValueAsString(result));
+//				// response.put("TeacherCount", result.size());
+//				// response.put("result", "SUCCESS");
+//			}
 		} catch (Exception e) {
 			response.put("result", "ERROR");
 			response.put("errorDescription", e.getMessage());
@@ -88,7 +91,7 @@ public class StudentController {
 			long exit = System.currentTimeMillis();
 		}
 		try {
-			return mapper.writeValueAsString(response);
+			return mapper.writeValueAsString(studentPojo);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"JSON Processing Error\"}";

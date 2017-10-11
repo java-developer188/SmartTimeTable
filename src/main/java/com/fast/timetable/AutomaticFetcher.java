@@ -3,11 +3,14 @@ package com.fast.timetable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -21,6 +24,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import com.fast.timetable.pojo.StudentPojo;
 
 public class AutomaticFetcher {
 	private final String CONFIG_FILE = "config.properties";
@@ -52,7 +57,8 @@ public class AutomaticFetcher {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		AutomaticFetcher automaticFetcher = new AutomaticFetcher();
-		automaticFetcher.execute();
+//		automaticFetcher.execute();
+		automaticFetcher.dummy();
 	}
 
 	public void execute() {
@@ -103,7 +109,36 @@ public class AutomaticFetcher {
 	}
 	
 	
+	public void dummy(){
+		StudentPojo studentPojo = new StudentPojo();
+		studentPojo.setBatch(2017);
+		studentPojo.setFullName("S S HAIDER");
+		studentPojo.setRollNumber("EE1202017");
+		studentPojo.setSection("B");
+		studentPojo.setEmail("haider188@hotmail.com");
+		studentPojo.setMobileNumber("03472404043");
+		Integer[] courses = new Integer[]{1,3,4,6};
+		studentPojo.setCourses(Arrays.asList(courses));
+		String url = URL +"student/register";
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<StudentPojo> request = new HttpEntity<>(studentPojo);
+		ResponseEntity<String> response = restTemplate
+		  .exchange(url, HttpMethod.POST, request, String.class);
+		  
+//		Map<String,Object> map = new HashMap<>();
+//		map.put("Student", studentPojo);
+//		postController(url, map);
+	}
 	
+	private boolean postController(String url,Map params){
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<Map<String,Object>> request = new HttpEntity<>(params);
+		ResponseEntity<String> response = restTemplate
+		  .exchange(url, HttpMethod.POST, request, String.class);
+		  
+		return response.getStatusCode() == HttpStatus.OK;
+
+	}
 	
 	private boolean callController(String url,Map params){
 		RestTemplate restTemplate = new RestTemplate();
