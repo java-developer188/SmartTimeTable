@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 
-public class StudentPojo {
-private Integer id;
+public class RegistrationPojo {
+
+	private Integer id;
 	
 	private Integer batch;
 	
@@ -14,21 +15,15 @@ private Integer id;
 	
 	private String fullName;
 	
+	private String userName;
+	
 	private String section;
 	
 	private String mobileNumber;
-	
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
-
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
 
 	private String email;
 	
-	private List<Integer> courses;
+	private List<Long> courses;
 
 	public Integer getId() {
 		return id;
@@ -52,6 +47,15 @@ private Integer id;
 
 	public void setRollNumber(String rollNumber) {
 		this.rollNumber = rollNumber;
+	}
+	
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String username) {
+		this.userName = username;
 	}
 
 	public String getFullName() {
@@ -79,13 +83,23 @@ private Integer id;
 		this.email = email;
 	}
 
-	public List<Integer> getCourses() {
+	
+
+	public List<Long> getCourses() {
 		return courses;
 	}
 
-	public void setCourses(List<Integer> courses) {
+	public void setCourses(List<Long> courses) {
 		this.courses = courses;
 	}
+
 	
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
 
 }

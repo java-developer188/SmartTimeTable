@@ -15,6 +15,7 @@ import com.fast.timetable.repository.CourseSectionTeacherRepository;
 import com.fast.timetable.repository.TeacherRepository;
 import com.fast.timetable.repository.TimeTableRepository;
 import com.fast.timetable.service.CourseService;
+import com.fast.timetable.service.RegistrationService;
 import com.fast.timetable.service.SectionService;
 import com.fast.timetable.service.StudentService;
 import com.fast.timetable.service.TeacherService;
@@ -23,8 +24,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(path = "/student")
-public class StudentController {
+@RequestMapping(path = "/register")
+public class RegistrationController {
 
 	@Autowired
 	CourseRepository courseRepository;
@@ -51,9 +52,10 @@ public class StudentController {
 	CourseService courseService;
 	
 	@Autowired
-	SectionService sectionService;
+	RegistrationService registrationService;
 
 
+	
 	
 	/**
 	 * To fetch student's timetable
@@ -62,23 +64,27 @@ public class StudentController {
 	 * @param httpreq
 	 * @return
 	 */
-	@RequestMapping(path = "/id", method = { RequestMethod.GET, RequestMethod.POST })
-	public String student(@RequestBody HashMap<String, String> map) {
+	@RequestMapping( method = { RequestMethod.POST })
+	public String register(@RequestBody RegistrationPojo registrationPojo) {
+		
 		long entry = System.currentTimeMillis();
 		HashMap<String, Object> response = new HashMap<>();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if (map.containsKey("id")) {
-				Long id = Long.valueOf(map.get("id"));
-				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
-				response.put("TimeTable", mapper.writeValueAsString(result));
-				response.put("TimeTableCount", result.size());
+			System.out.println(registrationPojo);
+			//registrationService.register(registrationPojo);
+			if (registrationService.register(registrationPojo)) {
+//				Long id = Long.valueOf(map.get("id"));
+//				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
+//				response.put("TimeTable", mapper.writeValueAsString(result));
+//				response.put("TimeTableCount", result.size());
 				response.put("result", "SUCCESS");
 			} else {
 				// List<Teacher> result = teacherService.getTeachers();
 				// response.put("Teachers", mapper.writeValueAsString(result));
 				// response.put("TeacherCount", result.size());
-				// response.put("result", "SUCCESS");
+				 response.put("result", "ERROR");
+				 response.put("errorDescription", "Registration failed");
 			}
 		} catch (Exception e) {
 			response.put("result", "ERROR");
@@ -96,5 +102,6 @@ public class StudentController {
 			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
 		}
 	}
+
 
 }

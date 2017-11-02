@@ -157,4 +157,9 @@ public class CourseService {
 	private int getSheetIndex() {
 		return SHEET_INDEX;
 	}
+	
+	public List<Course> getCoursesByBatch(int batch){
+		
+		return courseRepository.findByBatch(batch);
+	}
 }

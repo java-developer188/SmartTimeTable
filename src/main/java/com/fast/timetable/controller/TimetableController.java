@@ -291,47 +291,4 @@ public class TimetableController {
 			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
 		}
 	}
-
-	/**
-	 * Controller to call Category page service.
-	 * 
-	 * @param request
-	 * @param httpreq
-	 * @return
-	 */
-	@RequestMapping(path = "/courses", method = { RequestMethod.GET, RequestMethod.POST })
-	public String courses(@RequestBody HashMap<String, String> map) {
-		long entry = System.currentTimeMillis();
-		HashMap<String, Object> response = new HashMap<>();
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			if (map.containsKey("id")) {
-				Long id = Long.valueOf(map.get("id"));
-//				List<HashMap<String, String>> result = teacherService.getTeacherTimeTable(id);
-//				response.put("TimeTable", mapper.writeValueAsString(result));
-//				response.put("TimeTableCount", result.size());
-				response.put("result", "SUCCESS");
-			} else {
-				List<Course> result = courseService.getAll();
-				response.put("Courses", mapper.writeValueAsString(result));
-				response.put("CourseCount", result.size());
-				response.put("result", "SUCCESS");
-			}
-		} catch (Exception e) {
-			response.put("result", "ERROR");
-			response.put("errorDescription", e.getMessage());
-
-		} finally {
-			long exit = System.currentTimeMillis();
-		}
-		try {
-			return mapper.writeValueAsString(response);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"JSON Processing Error\"}";
-		} catch (NumberFormatException nfe) {
-			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
-		}
-	}
-	
 }

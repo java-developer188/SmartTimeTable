@@ -25,7 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fast.timetable.pojo.StudentPojo;
+import com.fast.timetable.pojo.RegistrationPojo;
 
 public class AutomaticFetcher {
 	private final String CONFIG_FILE = "config.properties";
@@ -110,18 +110,18 @@ public class AutomaticFetcher {
 	
 	
 	public void dummy(){
-		StudentPojo studentPojo = new StudentPojo();
+		RegistrationPojo studentPojo = new RegistrationPojo();
 		studentPojo.setBatch(2017);
 		studentPojo.setFullName("S S HAIDER");
 		studentPojo.setRollNumber("EE1202017");
 		studentPojo.setSection("B");
 		studentPojo.setEmail("haider188@hotmail.com");
 		studentPojo.setMobileNumber("03472404043");
-		Integer[] courses = new Integer[]{1,3,4,6};
+		Long[] courses = new Long[]{1l,3l,4l,6l};
 		studentPojo.setCourses(Arrays.asList(courses));
 		String url = URL +"student/register";
 		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<StudentPojo> request = new HttpEntity<>(studentPojo);
+		HttpEntity<RegistrationPojo> request = new HttpEntity<>(studentPojo);
 		ResponseEntity<String> response = restTemplate
 		  .exchange(url, HttpMethod.POST, request, String.class);
 		  
