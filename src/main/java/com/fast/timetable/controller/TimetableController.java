@@ -26,6 +26,7 @@ import com.fast.timetable.service.SectionService;
 import com.fast.timetable.service.StudentService;
 import com.fast.timetable.service.TeacherService;
 import com.fast.timetable.service.TimeTableService;
+import com.fast.timetable.utilities.ClassNotificationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,7 +38,7 @@ public class TimetableController {
 
 	@Autowired
 	TimeTableRepository timeTableRepository;
-	
+
 	@Autowired
 	TimeTableService timeTableService;
 
@@ -46,19 +47,22 @@ public class TimetableController {
 
 	@Autowired
 	TeacherService teacherService;
-	
+
 	@Autowired
 	TeacherRepository teacherRepository;
 
 	@Autowired
 	StudentService studentService;
-	
+
 	@Autowired
 	CourseService courseService;
-	
+
 	@Autowired
 	SectionService sectionService;
 
+	@Autowired
+	ClassNotificationService classNotificationService;
+	
 	boolean onlyOnce = true;
 
 	/**
@@ -70,33 +74,33 @@ public class TimetableController {
 	 */
 	@RequestMapping(path = "/test", method = RequestMethod.GET)
 	public String test() {
-		long entry = System.currentTimeMillis();
-		HashMap<String, Object> response = new HashMap<>();
-		ObjectMapper m = new ObjectMapper();
-		try {
-			Course course = courseRepository.findOne((long) 7);
-			TimeTable tt = timeTableRepository.findOne((long) 5);
-			CourseSectionTeacher cst = cstRepository.findOne((long) 6);
-			response.put("Course", m.writeValueAsString(course));
-			response.put("test", "testing value is good");
-		} catch (Exception e) {
-
-			response.put("resultcode", "INVALID_ARGUMENT");
-			response.put("resultdescription", e.getMessage());
-
-		} finally {
-			long exit = System.currentTimeMillis();
-		}
-		try {
-			return m.writeValueAsString(response);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			return "JSON Processing error";
-		}
+//		long entry = System.currentTimeMillis();
+//		HashMap<String, Object> response = new HashMap<>();
+//		ObjectMapper m = new ObjectMapper();
+//		try {
+//			Course course = courseRepository.findOne((long) 7);
+//			TimeTable tt = timeTableRepository.findOne((long) 5);
+//			CourseSectionTeacher cst = cstRepository.findOne((long) 6);
+//			response.put("Course", m.writeValueAsString(course));
+//			response.put("test", "testing value is good");
+//		} catch (Exception e) {
+//
+//			response.put("resultcode", "INVALID_ARGUMENT");
+//			response.put("resultdescription", e.getMessage());
+//
+//		} finally {
+//			long exit = System.currentTimeMillis();
+//		}
+//		try {
+//			return m.writeValueAsString(response);
+//		} catch (JsonProcessingException e) {
+//			// TODO Auto-generated catch block
+//			return "JSON Processing error";
+//		}
+		classNotificationService.startExecutionAt(16, 30, 0);
+		return "";
 	}
-	
-	
-	
+
 	/**
 	 * To initialize system from scratch.
 	 * 
@@ -111,11 +115,11 @@ public class TimetableController {
 		HashMap<String, Object> response = new HashMap<>();
 		ObjectMapper m = new ObjectMapper();
 		try {
-			
-				AutomaticFetcher automaticFetcher = new AutomaticFetcher();
-				automaticFetcher.execute();
-				response.put("Result", "System Started");
-			
+
+			AutomaticFetcher automaticFetcher = new AutomaticFetcher();
+			automaticFetcher.execute();
+			response.put("Result", "System Started");
+
 		} catch (Exception e) {
 
 			response.put("resultcode", "INVALID_ARGUMENT");
@@ -129,9 +133,8 @@ public class TimetableController {
 		} catch (JsonProcessingException e) {
 			return "JSON Processing error";
 		}
-	
+
 	}
-	
 
 	/**
 	 * To initialize system from scratch.
@@ -150,14 +153,16 @@ public class TimetableController {
 				onlyOnce = false;
 				courseService.save();
 				teacherService.save();
-				
+
 				DaySheetParser daySheetParser = new DaySheetParser(courseService.getAll(), teacherService.getAll());
 				daySheetParser.execute();
-				
+
 				sectionService.save();
-				
+
 				timeTableService.save();
 				response.put("Result", "System Initialized Successfully");
+				classNotificationService.setEarlyNotifyHour(Integer.parseInt(timeTableService.getProp().getProperty("Early_Notify_Hour")));
+				classNotificationService.startExecutionAt(classNotificationService.getEarlyNotifyHour(), 0 , 0);
 			} else {
 				response.put("Result", "Init Paramter found false");
 			}
@@ -175,20 +180,19 @@ public class TimetableController {
 			return "JSON Processing error";
 		}
 	}
-	
+
 	@RequestMapping(path = "/partial", method = RequestMethod.GET)
 	public String partial() {
 		long entry = System.currentTimeMillis();
 		HashMap<String, Object> response = new HashMap<>();
 		ObjectMapper m = new ObjectMapper();
 		try {
-				
-				DaySheetParser daySheetParser = new DaySheetParser(courseService.getAll(), teacherService.getAll());
-				daySheetParser.execute();
-				
-				
-				timeTableService.save();
-				response.put("Result", "System re-Initialized Successfully");
+
+			DaySheetParser daySheetParser = new DaySheetParser(courseService.getAll(), teacherService.getAll());
+			daySheetParser.execute();
+
+			timeTableService.save();
+			response.put("Result", "System re-Initialized Successfully");
 
 		} catch (Exception e) {
 
@@ -204,7 +208,6 @@ public class TimetableController {
 			return "JSON Processing error";
 		}
 	}
-	
 
 	/**
 	 * Controller to call Category page service.
@@ -225,13 +228,16 @@ public class TimetableController {
 				password = map.get("password");
 
 				Student student = studentService.login(username, password);
-				response.put("Student", mapper.writeValueAsString(student));
-				response.put("result", "SUCCESS");
+				if (student != null) {
+					response.put("Student", mapper.writeValueAsString(student));
+					response.put("result", "SUCCESS");
+				} else {
+					response.put("result", "ERROR");
+					response.put("errorDescription", "Invalid username/password");
+				}
 			} else {
-				// List<Teacher> result = teacherService.getTeachers();
-				// response.put("Teachers", mapper.writeValueAsString(result));
-				// response.put("TeacherCount", result.size());
-				// response.put("result", "SUCCESS");
+				response.put("result", "ERROR");
+				response.put("errorDescription", "Invalid username/password");
 			}
 		} catch (Exception e) {
 			response.put("result", "ERROR");
@@ -275,6 +281,39 @@ public class TimetableController {
 				response.put("TeacherCount", result.size());
 				response.put("result", "SUCCESS");
 			}
+		} catch (Exception e) {
+			response.put("result", "ERROR");
+			response.put("errorDescription", e.getMessage());
+
+		} finally {
+			long exit = System.currentTimeMillis();
+		}
+		try {
+			return mapper.writeValueAsString(response);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"JSON Processing Error\"}";
+		} catch (NumberFormatException nfe) {
+			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
+		}
+	}
+
+	/**
+	 * Controller to call Category page service.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/sendgcm", method = { RequestMethod.GET })
+	public String sendGcm(@RequestParam(value = "day", required = true) String day,
+			@RequestParam(value = "time", required = true) String time) {
+		long entry = System.currentTimeMillis();
+		HashMap<String, Object> response = new HashMap<>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			response.put("Message", timeTableService.sendGcm(day, time));
+
 		} catch (Exception e) {
 			response.put("result", "ERROR");
 			response.put("errorDescription", e.getMessage());

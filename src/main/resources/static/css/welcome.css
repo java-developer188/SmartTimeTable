@@ -1,0 +1,15 @@
+.timetable {
+	margin-right: 10%;
+	margin-left: 5%;
+	width:90%
+}
+
+.head{
+	    text-align: center;
+}
+.tt{
+	width:100%;
+	margin-bottom: 2%;
+	margin-left: 5%;
+	background-color: #eee;
+}

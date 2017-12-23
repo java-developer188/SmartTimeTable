@@ -1,0 +1,30 @@
+h1{
+	color:inherit;
+}
+
+h2{
+	color:inherit;
+}
+
+h3{
+	color:inherit;
+}
+
+footer{
+    margin-top:50px;
+    margin-left:20px;
+}
+
+.left-controls{
+	margin-right: 10px;
+	width:40%;
+}
+
+.right-controls{
+	margin-left: 10px;
+	height:410px;
+}
+
+.cust-nav{
+	margin-bottom: -10px;
+}

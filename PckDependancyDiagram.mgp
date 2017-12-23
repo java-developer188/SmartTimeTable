@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PackageAnalysis>
+    <Package name="com.fast.timetable" x="21" y="38">
+        <DependencyLink destination="com.fast.timetable.pojo"/>
+        <DependencyLink destination="com.fast.timetable.entity"/>
+    </Package>
+    <Package name="com.fast.timetable.controller" x="247" y="37">
+        <DependencyLink destination="com.fast.timetable"/>
+        <DependencyLink destination="com.fast.timetable.pojo"/>
+        <DependencyLink destination="com.fast.timetable.service"/>
+        <DependencyLink destination="com.fast.timetable.entity"/>
+        <DependencyLink destination="com.fast.timetable.repository"/>
+    </Package>
+    <Package name="com.fast.timetable.entity" x="27" y="168"/>
+    <Package name="com.fast.timetable.pojo" x="519" y="129"/>
+    <Package name="com.fast.timetable.repository" x="270" y="277">
+        <DependencyLink destination="com.fast.timetable.entity"/>
+    </Package>
+    <Package name="com.fast.timetable.service" x="396" y="194">
+        <DependencyLink destination="com.fast.timetable.pojo"/>
+        <DependencyLink destination="com.fast.timetable"/>
+        <DependencyLink destination="com.fast.timetable.entity"/>
+        <DependencyLink destination="com.fast.timetable.repository"/>
+    </Package>
+</PackageAnalysis>

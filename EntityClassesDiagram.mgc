@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <Class name="com.fast.timetable.entity.Course" x="648" y="117">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.CourseSectionTeacher" x="372" y="25">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Teacher"
+            endpointName="teacher" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Course"
+            endpointName="course" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Section"
+            endpointName="section" kind="Simple"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.Teacher" x="449" y="199">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.TimeTable" x="314" y="253">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.CourseSectionTeacher"
+            endpointName="courseSectionTeacher" kind="Simple">
+            <Point x="415" y="119"/>
+        </Association>
+    </Class>
+    <Class name="com.fast.timetable.entity.CSTStudent" x="226" y="85">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Student"
+            endpointName="student" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.CourseSectionTeacher"
+            endpointName="courseSectionTeacher" kind="Simple">
+            <Point x="266" y="47"/>
+        </Association>
+    </Class>
+    <Class name="com.fast.timetable.entity.Student" x="51" y="43">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.Section" x="681" y="18">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.CourseTeacher" x="569" y="301">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Teacher"
+            endpointName="teacher" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Course"
+            endpointName="course" kind="Simple"/>
+    </Class>
+    <Class name="com.fast.timetable.entity.Login" x="64" y="248">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association
+            destinationClassName="com.fast.timetable.entity.Student"
+            endpointName="student" kind="Simple"/>
+    </Class>
+</ClassDiagram>

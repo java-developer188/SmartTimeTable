@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fast.timetable.entity.Student;
 import com.fast.timetable.pojo.RegistrationPojo;
 import com.fast.timetable.repository.CourseRepository;
 import com.fast.timetable.repository.CourseSectionTeacherRepository;
@@ -72,17 +73,10 @@ public class RegistrationController {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			System.out.println(registrationPojo);
-			//registrationService.register(registrationPojo);
-			if (registrationService.register(registrationPojo)) {
-//				Long id = Long.valueOf(map.get("id"));
-//				List<HashMap<String, String>> result = studentService.getStudentTimeTable(id);
-//				response.put("TimeTable", mapper.writeValueAsString(result));
-//				response.put("TimeTableCount", result.size());
+			Student student = registrationService.register(registrationPojo);
+			if (student != null) {
 				response.put("result", "SUCCESS");
 			} else {
-				// List<Teacher> result = teacherService.getTeachers();
-				// response.put("Teachers", mapper.writeValueAsString(result));
-				// response.put("TeacherCount", result.size());
 				 response.put("result", "ERROR");
 				 response.put("errorDescription", "Registration failed");
 			}

@@ -25,4 +25,8 @@ public interface TimeTableRepository extends CrudRepository<TimeTable, Long> {
 	@Query("select tt.day,tt.time,tt.room,cst.course.fullName,cst.section.name,cst.teacher.name from TimeTable tt inner join tt.courseSectionTeacher cst , CSTStudent x where x.courseSectionTeacher.id = cst.id and x.student.id = :id")
 	List<Object[]> getTimetableByStudentId(@Param(value = "id") Long id);
 	
+	
+	@Query(  "select tt.time,cst.course.fullName,cst.course.shortName,l.token from TimeTable tt  inner join tt.courseSectionTeacher cst ,CSTStudent csts ,Login l where csts.courseSectionTeacher.id = cst.id and l.student.id = csts.student.id and tt.day =:day and tt.time = :time")
+	List<Object[]> getNotificationRecipentData(@Param(value = "day") String day , @Param(value = "time") String time);
+	
 }

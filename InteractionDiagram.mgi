@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <CommunicationClass
+        name="com.fast.timetable.controller.CourseController" x="579" y="21">
+        <Association
+            destinationClassName="com.fast.timetable.service.SectionService"
+            endpointName="sectionService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.StudentService"
+            endpointName="studentService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseService"
+            endpointName="courseService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TeacherService"
+            endpointName="teacherService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseSectionTeacherService"
+            endpointName="courseSectionTeacherService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TimeTableService"
+            endpointName="timeTableService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.service.CourseService"/>
+        <Communication destinationClassName="com.fast.timetable.service.CourseSectionTeacherService"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.AutomaticFetcher"
+        x="337" y="464">
+        <Communication destinationClassName="com.fast.timetable.ExecuteShellComand"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.service.CourseSectionTeacherService"
+        x="380" y="132"/>
+    <CommunicationClass
+        name="com.fast.timetable.controller.WebController" x="188" y="22">
+        <Association
+            destinationClassName="com.fast.timetable.service.RegistrationService"
+            endpointName="registrationService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.StudentService"
+            endpointName="studentService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseSectionTeacherService"
+            endpointName="courseSectionTeacherService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.service.CourseSectionTeacherService"/>
+        <Communication destinationClassName="com.fast.timetable.service.RegistrationService"/>
+        <Communication destinationClassName="com.fast.timetable.service.StudentService"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.service.CourseService"
+        x="810" y="124"/>
+    <CommunicationClass
+        name="com.fast.timetable.service.RegistrationService" x="19" y="123">
+        <Association
+            destinationClassName="com.fast.timetable.EmailService"
+            endpointName="emailService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.EmailService"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.EmailService" x="28" y="215"/>
+    <CommunicationClass name="com.fast.timetable.ExecuteShellComand"
+        x="646" y="461"/>
+    <CommunicationClass name="com.fast.timetable.DaySheetParser" x="697" y="368"/>
+    <CommunicationClass name="com.fast.timetable.service.LoginService"
+        x="284" y="389"/>
+    <CommunicationClass
+        name="com.fast.timetable.controller.TimetableController" x="429" y="204">
+        <Association
+            destinationClassName="com.fast.timetable.service.SectionService"
+            endpointName="sectionService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.StudentService"
+            endpointName="studentService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseService"
+            endpointName="courseService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TeacherService"
+            endpointName="teacherService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TimeTableService"
+            endpointName="timeTableService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.service.CourseService"/>
+        <Communication destinationClassName="com.fast.timetable.AutomaticFetcher"/>
+        <Communication destinationClassName="com.fast.timetable.service.SectionService"/>
+        <Communication destinationClassName="com.fast.timetable.service.TeacherService"/>
+        <Communication destinationClassName="com.fast.timetable.service.TimeTableService"/>
+        <Communication destinationClassName="com.fast.timetable.DaySheetParser"/>
+        <Communication destinationClassName="com.fast.timetable.service.StudentService"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.controller.StudentController" x="79" y="381">
+        <Association
+            destinationClassName="com.fast.timetable.service.SectionService"
+            endpointName="sectionService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.StudentService"
+            endpointName="studentService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseService"
+            endpointName="courseService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.LoginService"
+            endpointName="loginService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TeacherService"
+            endpointName="teacherService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TimeTableService"
+            endpointName="timeTableService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.service.LoginService"/>
+        <Communication destinationClassName="com.fast.timetable.service.StudentService"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.service.StudentService"
+        x="144" y="285"/>
+    <CommunicationClass name="com.fast.timetable.service.SectionService"
+        x="817" y="205"/>
+    <CommunicationClass
+        name="com.fast.timetable.controller.RegistrationController"
+        x="8" y="21">
+        <Association
+            destinationClassName="com.fast.timetable.service.RegistrationService"
+            endpointName="registrationService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.StudentService"
+            endpointName="studentService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.CourseService"
+            endpointName="courseService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TeacherService"
+            endpointName="teacherService" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.service.TimeTableService"
+            endpointName="timeTableService" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.service.RegistrationService"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.service.TeacherService"
+        x="500" y="368"/>
+    <CommunicationClass
+        name="com.fast.timetable.service.TimeTableService" x="800" y="279"/>
+</ClassDiagram>

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fast.timetable.entity.Login;
 import com.fast.timetable.entity.Student;
 import com.fast.timetable.entity.Teacher;
 import com.fast.timetable.repository.CourseSectionTeacherRepository;
@@ -22,11 +24,14 @@ public class StudentService {
 	LoginRepository loginRepository;
 	
 	@Autowired
+	StudentRepository studentRepository;
+	
+	@Autowired
 	TimeTableRepository timeTableRepository;
 	
 	public Student login(String username , String password){
 		List<Teacher> list = new ArrayList<>();
-		Student student = loginRepository.findByUsername(username);
+		Student student = loginRepository.findByUsernameAndPassword(username, password);
 		return student;
 	}
 	
@@ -43,6 +48,25 @@ public class StudentService {
 			list.add(map);
 		}
 		return list ;
+	}
+	
+	public Student getStudentByUsername(String username){
+		return loginRepository.findStudentByUsername(username);
+	}
+	
+	public Student getStudentById(Long id){
+		return studentRepository.findOne(id);
+		
+	}
+	
+	public boolean changePassword(String username , String newPassword){
+		Login login = 	loginRepository.findByUsername(username);
+		if(login != null){
+			login.setPassword(newPassword);
+			loginRepository.save(login);
+			return true;
+		}
+		return false;
 	}
 	
 }

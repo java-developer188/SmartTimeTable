@@ -26,8 +26,11 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-mail')
 	runtime('mysql:mysql-connector-java')
+	compile('org.springframework.boot:spring-boot-devtools')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.apache.poi:poi-ooxml:3.16')
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
+	compile('org.webjars:bootstrap:3.3.7')
 }

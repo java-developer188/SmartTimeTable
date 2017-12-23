@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <CommunicationClass
+        name="com.fast.timetable.repository.LoginRepository" x="259" y="364"/>
+    <CommunicationClass name="com.fast.timetable.service.LoginService"
+        x="66" y="366">
+        <Association
+            destinationClassName="com.fast.timetable.repository.LoginRepository"
+            endpointName="loginRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.LoginRepository"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.repository.CourseTeacherRepository"
+        x="65" y="291"/>
+    <CommunicationClass
+        name="com.fast.timetable.service.CourseSectionTeacherService"
+        x="629" y="25">
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"
+            endpointName="courseSectionTeacherRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.repository.CourseRepository" x="717" y="211"/>
+    <CommunicationClass
+        name="com.fast.timetable.repository.SectionRepository" x="634" y="124"/>
+    <CommunicationClass name="com.fast.timetable.service.StudentService"
+        x="513" y="395">
+        <Association
+            destinationClassName="com.fast.timetable.repository.StudentRepository"
+            endpointName="studentRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.TimeTableRepository"
+            endpointName="timeTableRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.LoginRepository"
+            endpointName="loginRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.LoginRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.TimeTableRepository"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.repository.TeacherRepository" x="257" y="206"/>
+    <CommunicationClass name="com.fast.timetable.service.CourseService"
+        x="725" y="308">
+        <Association
+            destinationClassName="com.fast.timetable.repository.TimeTableRepository"
+            endpointName="timeTableRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"
+            endpointName="courseSectionTeacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseRepository"
+            endpointName="courseRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.CourseRepository"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.service.SectionService"
+        x="847" y="125">
+        <Association
+            destinationClassName="com.fast.timetable.repository.SectionRepository"
+            endpointName="sectionRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.SectionRepository"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.repository.TimeTableRepository" x="494" y="322"/>
+    <CommunicationClass
+        name="com.fast.timetable.repository.CSTStudentRepository" x="69" y="205"/>
+    <CommunicationClass
+        name="com.fast.timetable.service.RegistrationService" x="76" y="23">
+        <Association
+            destinationClassName="com.fast.timetable.repository.CSTStudentRepository"
+            endpointName="cstStudentRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.StudentRepository"
+            endpointName="studentRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"
+            endpointName="courseSectionTeacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.LoginRepository"
+            endpointName="loginRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.StudentRepository"/>
+    </CommunicationClass>
+    <CommunicationClass name="com.fast.timetable.service.TeacherService"
+        x="268" y="290">
+        <Association
+            destinationClassName="com.fast.timetable.repository.TeacherRepository"
+            endpointName="teacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.TimeTableRepository"
+            endpointName="timeTableRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"
+            endpointName="courseSectionTeacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseRepository"
+            endpointName="courseRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseTeacherRepository"
+            endpointName="courseTeacherRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.TeacherRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.TimeTableRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.CourseRepository"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="com.fast.timetable.repository.CourseSectionTeacherRepository"
+        x="340" y="25"/>
+    <CommunicationClass
+        name="com.fast.timetable.repository.StudentRepository" x="78" y="126"/>
+    <CommunicationClass
+        name="com.fast.timetable.service.TimeTableService" x="384" y="122">
+        <Association
+            destinationClassName="com.fast.timetable.repository.TeacherRepository"
+            endpointName="teacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.TimeTableRepository"
+            endpointName="timeTableRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"
+            endpointName="courseSectionTeacherRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.CourseRepository"
+            endpointName="courseRepository" kind="Simple"/>
+        <Association
+            destinationClassName="com.fast.timetable.repository.SectionRepository"
+            endpointName="sectionRepository" kind="Simple"/>
+        <Communication destinationClassName="com.fast.timetable.repository.TeacherRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.TimeTableRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.CourseRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.CourseSectionTeacherRepository"/>
+        <Communication destinationClassName="com.fast.timetable.repository.SectionRepository"/>
+    </CommunicationClass>
+</ClassDiagram>

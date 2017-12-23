@@ -3,6 +3,7 @@ package com.fast.timetable.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fast.timetable.EmailService;
 import com.fast.timetable.entity.CSTStudent;
 import com.fast.timetable.entity.CourseSectionTeacher;
 import com.fast.timetable.entity.Login;
@@ -27,8 +28,11 @@ public class RegistrationService {
 
 	@Autowired
 	CourseSectionTeacherRepository courseSectionTeacherRepository;
+	
+	@Autowired
+	EmailService emailService;
 
-	public boolean register(RegistrationPojo registrationPojo) {
+	public Student register(RegistrationPojo registrationPojo) {
 		Student student = new Student();
 		student.setBatch(registrationPojo.getBatch());
 		student.setFullName(registrationPojo.getFullName());
@@ -61,14 +65,17 @@ public class RegistrationService {
 			if (login.getId() != null && login.getId() > 0) {
 				long id = login.getId();
 				String seed = "FAST";
-				login.setPassword(Long.toString(id));
+				login.setPassword(Long.toString(id)+"smart@user");
 				loginRepository.save(login);
 			}
-			return true;
+			emailService.sendSimpleMessage(student.getEmail(), "Smart TimeTable Credentials", 
+					"Dear user your Password for Username:'"+login.getUsername()+"' is "+login.getPassword());
+			
+			return student;
 
 		}
 		else{
-			return false;
+			return null;
 		}
 	}
 }

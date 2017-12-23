@@ -17,6 +17,8 @@ public class Login {
 	
 	private String password;
 	
+	private String token;
+	
 	@OneToOne
 	private Student student;
 
@@ -50,6 +52,14 @@ public class Login {
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 	

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Smart Timetable Notifier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<link rel="stylesheet" th:href="@{/css/registration.css}"
+	href="../../css/registration.css" />
+
+</head>
+<body>
+
+	<script type="text/javascript"
+		src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<nav class="cust-nav navbar navbar-inverse ">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Smart Timetable Notifier</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/web">Login</a></li>
+					<li class="active"><a href="#">Register</a></li>
+					<li><a href="/web/changepassword">Change
+							Password</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+
+		<div class="row" style="margin-top: 20px">
+
+			<form th:action="@{/web/register/submit}"
+				th:object="${registrationPojo}" id="registrationPojo" method="post">
+				<fieldset>
+					<h3>Registration</h3>
+					<div style="display: flex">
+						<div class="left-controls">
+
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="fullName" id="fullName"
+											class="form-control input-lg" placeholder="Full Name"
+											th:value="${fullName}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="fullName" id="fullName"
+											class="form-control input-lg" placeholder="Full Name" />
+									</p>
+								</div>
+								<div th:if="${fullNameError}">
+									<div class="alert alert-danger">
+										<span th:text="${fullNameError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="section" id="section"
+											class="form-control input-lg" placeholder="Section"
+											th:value="${section}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="section" id="section"
+											class="form-control input-lg" placeholder="Section" />
+									</p>
+								</div>
+
+								<div th:if="${sectionError}">
+									<div class="alert alert-danger">
+										<span th:text="${sectionError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="rollNumber" id="rollNumber"
+											class="form-control input-lg" placeholder="Roll Number"
+											th:value="${rollNumber}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="rollNumber" id="rollNumber"
+											class="form-control input-lg" placeholder="Roll Number" />
+									</p>
+								</div>
+
+								<div th:if="${rollNumberError}">
+									<div class="alert alert-danger">
+										<span th:text="${rollNumberError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="batch" id="batch" pattern="\d*"
+											class="form-control input-lg" placeholder="Batch"
+											th:value="${batch}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="batch" id="batch" pattern="\d*"
+											class="form-control input-lg" placeholder="Batch" />
+									</p>
+								</div>
+
+								<div th:if="${batchError}">
+									<div class="alert alert-danger">
+										<span th:text="${batchError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="userName" id="userName"
+											class="form-control input-lg" placeholder="User Name"
+											th:value="${userName}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="userName" id="userName"
+											class="form-control input-lg" placeholder="User Name" />
+									</p>
+								</div>
+
+								<div th:if="${userNameError}">
+									<div class="alert alert-danger">
+										<span th:text="${userNameError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="email" id="email"
+											class="form-control input-lg" placeholder="Email Address"
+											th:value="${email}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="email" id="email"
+											class="form-control input-lg" placeholder="Email Address" />
+									</p>
+								</div>
+
+								<div th:if="${emailError}">
+									<div class="alert alert-danger">
+										<span th:text="${emailError}"></span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div th:switch="${validation}">
+									<p th:case="false">
+										<input type="text" name="mobileNumber" id="mobileNumber" pattern="\d*"
+											class="form-control input-lg" placeholder="Mobile Number"
+											th:value="${mobileNumber}" />
+									</p>
+									<p th:case="*">
+										<input type="text" name="mobileNumber" id="mobileNumber" pattern="\d*"
+											class="form-control input-lg" placeholder="Mobile Number" />
+									</p>
+								</div>
+
+								<div th:if="${mobileNumberError}">
+									<div class="alert alert-danger">
+										<span th:text="${mobileNumberError}"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="right-controls ">
+							<div class="form-group right-controls ">
+								<select class="form-control" style="height: 100%"
+									th:object="${courses}" multiple="multiple" name="courses"
+									id="courses">
+									<option th:each="val : ${cst}" th:value="${val.id}"
+										th:text="|${val.id} : ${val.course.fullName}, ${val.teacher.name}, Section-${val.section.name}|"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div
+						class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-md-6">
+								<input type="submit" class="btn btn-lg btn-primary btn-block"
+									value="Sign In" />
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-6"></div>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<footer>
+		<!-- this is footer -->
+		<!-- © 2017 Smart Timetable Notifier  -->
+
+	</footer>
+
+</body>
+</html>
