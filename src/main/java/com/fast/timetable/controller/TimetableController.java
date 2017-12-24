@@ -1,5 +1,6 @@
 package com.fast.timetable.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class TimetableController {
 //			// TODO Auto-generated catch block
 //			return "JSON Processing error";
 //		}
-		classNotificationService.startExecutionAt(16, 30, 0);
+		classNotificationService.startExecutionAt(15, 05, 0);
 		return "";
 	}
 
@@ -161,8 +162,16 @@ public class TimetableController {
 
 				timeTableService.save();
 				response.put("Result", "System Initialized Successfully");
-				classNotificationService.setEarlyNotifyHour(Integer.parseInt(timeTableService.getProp().getProperty("Early_Notify_Hour")));
-				classNotificationService.startExecutionAt(classNotificationService.getEarlyNotifyHour(), 0 , 0);
+
+				if (timeTableService.getProp().getProperty("Notify_Service") != null
+						&& timeTableService.getProp().getProperty("Notify_Service").equals("true")) {
+					LocalDateTime localNow = LocalDateTime.now();
+					if (localNow.getHour() < 7 && localNow.getHour() > 15) {
+						classNotificationService.startExecutionAt(7, 0, 0);
+					} else {
+						classNotificationService.startExecutionAt(localNow.getHour() + 1, 0, 0);
+					}
+				}
 			} else {
 				response.put("Result", "Init Paramter found false");
 			}
@@ -313,6 +322,39 @@ public class TimetableController {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			response.put("Message", timeTableService.sendGcm(day, time));
+
+		} catch (Exception e) {
+			response.put("result", "ERROR");
+			response.put("errorDescription", e.getMessage());
+
+		} finally {
+			long exit = System.currentTimeMillis();
+		}
+		try {
+			return mapper.writeValueAsString(response);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"JSON Processing Error\"}";
+		} catch (NumberFormatException nfe) {
+			return "{\"result\":\"ERROR\"," + "\"errorDescription\":\"Invalid ID\"}";
+		}
+	}
+	
+	/**
+	 * Controller to call Category page service.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/sendsms", method = { RequestMethod.GET })
+	public String sendSms(@RequestParam(value = "day", required = true) String day,
+			@RequestParam(value = "time", required = true) String time) {
+		long entry = System.currentTimeMillis();
+		HashMap<String, Object> response = new HashMap<>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			response.put("Message", timeTableService.sendSms(day, time));
 
 		} catch (Exception e) {
 			response.put("result", "ERROR");

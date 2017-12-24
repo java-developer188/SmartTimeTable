@@ -3,14 +3,12 @@ package com.fast.timetable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -26,10 +24,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.fast.timetable.pojo.RegistrationPojo;
+//import com.fast.timetable.utilities.Quickstart;
 
 public class AutomaticFetcher {
 	private final String CONFIG_FILE = "config.properties";
 	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	private final String VERSIONING = "Versioning";
+	private final String VERSIONING_GOOGLE = "google";
+	private final String VERSIONING_FAST = "fast";
 	private Properties prop = new Properties();
 	private InputStream input;
 	private ScheduledFuture futureTask;
@@ -38,6 +40,7 @@ public class AutomaticFetcher {
 	private Date intervalStart, intervalEnd;
 	private boolean onlyOnce = true;
 	private final String URL = "http://localhost:8088/";
+	public static int version = 1;
 
 	public AutomaticFetcher() {
 		try {
@@ -57,8 +60,8 @@ public class AutomaticFetcher {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		AutomaticFetcher automaticFetcher = new AutomaticFetcher();
-//		automaticFetcher.execute();
-		automaticFetcher.dummy();
+		automaticFetcher.execute();
+		//automaticFetcher.dummy();
 	}
 
 	public void execute() {
@@ -67,6 +70,7 @@ public class AutomaticFetcher {
 		System.out.println("Execute() " + DATE_FORMAT.format(intervalStart));
 		totalInterval = Integer.parseInt(prop.getProperty("Total_Interval"));
 		System.out.println("Total Intervals :" + totalInterval);
+		version = prop.getProperty("TimeTable_Version")!= null ? Integer.parseInt(prop.getProperty("TimeTable_Version")) : 1 ;
 		generateFetcher().run();
 	}
 
@@ -77,24 +81,36 @@ public class AutomaticFetcher {
 			public void run() {
 				ExecuteShellComand shellCommand = new ExecuteShellComand();
 				System.out.println("Executing run(): " + DATE_FORMAT.format(Calendar.getInstance().getTime()));
-				String fromFile = "https://drive.google.com/uc?export=download&id=0BxVBN-pWNf_rc1NBck94QzlkR0E";
-				String toFile = "/home/sshaider/FypMs/DataCleaning/input/BSCS.xlsx";
 				try {
+					String toFile = "/home/sshaider/FypMs/DataCleaning/input/BSCS.xlsx";
+					String fromFile = "";
+					if (prop.getProperty(VERSIONING) != null
+							&& prop.getProperty(VERSIONING).equals(VERSIONING_GOOGLE)) {
+						fromFile = prop.getProperty("Url")!= null ? prop.getProperty("Url") : "https://drive.google.com/uc?export=download&id=0BxVBN-pWNf_rc1NBck94QzlkR0E";
+					} 
+					else if (prop.getProperty(VERSIONING) != null
+							&& prop.getProperty(VERSIONING).equals(VERSIONING_FAST)) {
+//						String fileName =  prop.getProperty("TimeTable_Filename")!= null ? prop.getProperty("TimeTable_Filename") : "BSCS_v";
+//						String extension =  prop.getProperty("TimeTable_FileType")!= null ? prop.getProperty("TimeTable_FileType") : ".xlsx";
+//						String[] versionAndFile = Quickstart.getVersionAndFileUrl(fileName,version,extension).split("$$");
+//						version =  Integer.parseInt(versionAndFile[0]);
+//						fromFile = versionAndFile[1];
+					}
 					// connectionTimeout, readTimeout = 10 seconds
-					
+
 					if (onlyOnce) {
 						// initialize system
 						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
 						shellCommand.executeOpenRefineScript();
-						String url = URL +"init?value=true";
-						callController(url,null);
+						String url = URL + "init?value=true";
+						callController(url, null);
 						System.out.println("initialize system");
 					} else {
 						// regenerate timetable only
 						shellCommand.executePartialSchemaScript();
 						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
-						String url = URL +"partial";
-						callController(url,null);
+						String url = URL + "partial";
+						callController(url, null);
 						System.out.println("regenerate timetable only");
 					}
 

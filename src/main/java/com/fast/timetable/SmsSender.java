@@ -37,32 +37,31 @@ public class SmsSender {
 		}
 	}
 
-	public void sendSms(String recipent, String message) {
-		try {
-			String formattedNumber = "";
-			if (recipent.matches("^(0[0-9]{10})$")) {
-				formattedNumber = "92" + recipent.substring(1);
-			} else if (recipent.matches("^(\\+92[1-9][0-9]{9})$")) {
-				formattedNumber = recipent.substring(1);
-			} else if (recipent.matches("^(0092[1-9][0-9]{9})$")) {
-				formattedNumber = recipent.substring(2);
-			}
+	public boolean sendSms(String recipent, String message) {
+		String formattedNumber = "";
+		if (recipent.matches("^(0[0-9]{10})$")) {
+			formattedNumber = "92" + recipent.substring(1);
+		} else if (recipent.matches("^(\\+92[1-9][0-9]{9})$")) {
+			formattedNumber = recipent.substring(1);
+		} else if (recipent.matches("^(0092[1-9][0-9]{9})$")) {
+			formattedNumber = recipent.substring(2);
+		}
 
-			if (formattedNumber.matches("^(92[0-9]{10})$")) {
+		if (formattedNumber.matches("^(92[0-9]{10})$")) {
 
-				String sendSmsUrl = "http://sendpk.com/api/sms.php?username=" + username + "&password=" + password
-						+ "&mobile=" + recipent + "&sender=" + sender + "&message=" + message;
+			String sendSmsUrl = "http://sendpk.com/api/sms.php?username=" + username + "&password=" + password
+					+ "&mobile=" + recipent + "&sender=" + sender + "&message=" + message;
 
-				if (httpGet(sendSmsUrl)) {
-					System.out.println("SMS sent successfully to " + recipent);
-				} else {
-					System.out.println("Failed to send SMS to " + recipent);
-				}
+			if (httpGet(sendSmsUrl)) {
+				System.out.println("SMS sent successfully to " + recipent);
+				return true;
 			} else {
-				throw new IllegalArgumentException();
+				System.out.println("Failed to send SMS to " + recipent);
+				return false;
 			}
-		} catch (IllegalArgumentException ill) {
+		} else {
 			System.out.println("Phone Number Invalid");
+			return false;
 		}
 	}
 

@@ -1,9 +1,12 @@
 package com.fast.timetable.utilities;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,10 +19,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClassNotificationService
 {
+	private static final String PROP_FILE = "config.properties";
+	private Properties prop = new Properties();
+	
     ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     volatile boolean isStopIssued;
     private int modEightCounter = 0;
-    private int earlyNotifyHour = 7;
+    private int earlyNotifyHour = 1;
     
 	@Autowired
     ClassNotificationTask classNotificationTask;
@@ -30,18 +36,26 @@ public class ClassNotificationService
 		cns.startExecutionAt(16, 28, 0);
 	}
     
+    private void loadProp() {
+		try {
+			InputStream input = getClass().getClassLoader().getResourceAsStream(PROP_FILE);
+			if (input == null) {
+				System.out.println("Sorry, unable to find " + PROP_FILE);
+				return;
+			}
 
-    public int getEarlyNotifyHour() {
-		return earlyNotifyHour;
+			prop.load(input);
+			earlyNotifyHour = Integer.parseInt(prop.getProperty("Early_Notify_Hour"));
+		} catch (IOException e) {
+			Logger.getGlobal().log(Level.SEVERE, "Sorry, unable to find " + PROP_FILE);
+		}
 	}
-
-	public void setEarlyNotifyHour(int earlyNotifyHour) {
-		this.earlyNotifyHour = 8 - earlyNotifyHour;
-	}
+    
 
     
     public void startExecutionAt(int targetHour, int targetMin, int targetSec)
     {
+    	loadProp();
         Runnable taskWrapper = new Runnable(){
 
             @Override
@@ -50,7 +64,7 @@ public class ClassNotificationService
             	modEightCounter++;
                 classNotificationTask.execute();
                 modEightCounter = modEightCounter % 8;
-                int hour =  modEightCounter + getEarlyNotifyHour() ;
+                int hour =  modEightCounter + (8-earlyNotifyHour) ;
                 
                 startExecutionAt(hour, targetMin, targetSec);
             }

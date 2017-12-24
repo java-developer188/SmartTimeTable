@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hamcrest.text.IsEmptyString;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fast.timetable.SmsSender;
 import com.fast.timetable.entity.Course;
 import com.fast.timetable.entity.CourseSectionTeacher;
 import com.fast.timetable.entity.Section;
@@ -61,7 +63,8 @@ public class TimeTableService {
 	private static final int COURSE = 3;
 	private static final int SECTION = 4;
 	private static final int TEACHER = 5;
-
+	private String[] timeSlots = {null,"1-1:55","2-2:55","3-3:55",null,null,null,null,"08-8:55","09-09:55","10-10:55","11-11:55","12-12:55"};
+	
 	private String fileName;
 	private Properties prop = new Properties();
 	private Workbook readWorkbook;
@@ -173,6 +176,10 @@ public class TimeTableService {
 		// Logger.getGlobal().log(Level.SEVERE, e.getLocalizedMessage());
 		// }
 	}
+	
+	public String getTimeSlotFromHour(int hour) {
+		return timeSlots[hour];
+	}
 
 	public String sendGcm(String day, String time) {
 		boolean response = true;
@@ -184,6 +191,7 @@ public class TimeTableService {
 			String fullName = (record[1] != null && record[1] instanceof String) ? (String) record[1] : "";
 			String shortName = (record[2] != null && record[2] instanceof String) ? (String) record[2] : "";
 			String token = (record[3] != null && record[3] instanceof String) ? (String) record[3] : null;
+			String mobileNumber = (record[4] != null && record[4] instanceof String) ? (String) record[4] : null;
 			if (token != null) {
 				totalRecipents++;
 				response = send(token, createGcmMessage(fullName, shortName, timeslot), createGcmTitle(shortName));
@@ -198,7 +206,67 @@ public class TimeTableService {
 			return "Unable to send Push Notifications to " + failureCount + " out of " + totalRecipents + " recipents";
 		}
 	}
+	
+	public String sendSms(String day, String time) {
+		boolean response = true;
+		int failureCount = 0;
+		int totalRecipents = 0; 
+		SmsSender smsSender = new SmsSender();
+		List<Object[]> results = timeTableRepository.getNotificationRecipentData(day, time);
+		for (Object[] record : results) {
+			String timeslot = (record[0] != null && record[0] instanceof String) ? (String) record[0] : "";
+			String fullName = (record[1] != null && record[1] instanceof String) ? (String) record[1] : "";
+			String shortName = (record[2] != null && record[2] instanceof String) ? (String) record[2] : "";
+			String token = (record[3] != null && record[3] instanceof String) ? (String) record[3] : null;
+			String mobileNumber = (record[4] != null && record[4] instanceof String) ? (String) record[4] : null;
+			String message = createGcmMessage(fullName, shortName, timeslot);
+			if (mobileNumber != null && !mobileNumber.isEmpty()) {
+				totalRecipents++;
+				if (!smsSender.sendSms(mobileNumber, message)) {
+					failureCount++;
+				}
+			}
+		}
+		if (failureCount == 0) {
+			return "SMS sent successfully to all " + totalRecipents + " recipents";
+		} else {
+			return "Unable to send SMS to " + failureCount + " out of " + totalRecipents + " recipents";
+		}
+	}
 
+	public String sendSMSAndGCM(String day, String time) {
+		int failureGCMCount = 0;
+		int totalGCMRecipents = 0;
+		int failureSMSCount = 0;
+		int totalSMSRecipents = 0;
+		SmsSender smsSender = new SmsSender();
+		List<Object[]> results = timeTableRepository.getNotificationRecipentData(day, time);
+		for (Object[] record : results) {
+			String timeslot = (record[0] != null && record[0] instanceof String) ? (String) record[0] : "";
+			String fullName = (record[1] != null && record[1] instanceof String) ? (String) record[1] : "";
+			String shortName = (record[2] != null && record[2] instanceof String) ? (String) record[2] : "";
+			String token = (record[3] != null && record[3] instanceof String) ? (String) record[3] : null;
+			String mobileNumber = (record[4] != null && record[4] instanceof String) ? (String) record[4] : null;
+			String message = createGcmMessage(fullName, shortName, timeslot);
+			if (token != null) {
+				totalGCMRecipents++;
+				if (!send(token, message, createGcmTitle(shortName))) {
+					failureGCMCount++;
+				}
+			}
+			if (mobileNumber != null && !mobileNumber.isEmpty()) {
+				totalSMSRecipents++;
+				if (!smsSender.sendSms(mobileNumber, message)) {
+					failureSMSCount++;
+				}
+			}
+		}
+
+		return "Push Notifications sent to " + (totalGCMRecipents - failureGCMCount) + "/" + totalGCMRecipents
+				+ " and SMS sent to " + (totalSMSRecipents - failureSMSCount) + "/" + totalSMSRecipents;
+	}
+	
+	
 	private String createGcmMessage(String fullName, String shortName, String time) {
 		return "\"" + fullName + "\" class, Timing:" + time ;
 	}
