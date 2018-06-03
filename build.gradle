@@ -32,8 +32,9 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.apache.poi:poi-ooxml:3.16')
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
+	compile ('javax.servlet:javax.servlet-api:3.1.0')
 	compile('org.webjars:bootstrap:3.3.7')
-	//compile 'com.google.api-client:google-api-client:1.23.0'
-    //compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-    //compile 'com.google.apis:google-api-services-drive:v3-rev94-1.23.0'
+	compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.google.apis:google-api-services-drive:v3-rev94-1.23.0'
 }

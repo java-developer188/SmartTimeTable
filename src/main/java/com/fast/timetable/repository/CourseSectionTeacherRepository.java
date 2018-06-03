@@ -14,7 +14,14 @@ public interface CourseSectionTeacherRepository extends CrudRepository<CourseSec
 			+ " and cst.section.name = :section" + " and cst.teacher.name like %:teacherName%")
 	public CourseSectionTeacher findByCST(@Param("courseFullName") String courseFullName,
 			@Param("section") String section, @Param("teacherName") String teacherName);
+	
+	@Query("FROM CourseSectionTeacher cst WHERE cst.course.code = :code"
+			+ " and cst.section.name = :section ")
+	public CourseSectionTeacher findByCourseSection(@Param("code") String code,
+			@Param("section") String section);
 
 	public List<CourseSectionTeacher> findByCourseId(long courseId);
+	
+	public List<CourseSectionTeacher> findByTeacherId(long teacherId);
 
 }

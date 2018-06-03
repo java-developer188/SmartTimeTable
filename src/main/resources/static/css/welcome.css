@@ -1,15 +1,97 @@
 .timetable {
 	margin-right: 10%;
 	margin-left: 5%;
-	width:90%
+	width: 90%
 }
 
-.head{
-	    text-align: center;
+.head {
+	text-align: center;
 }
-.tt{
-	width:100%;
+
+.tt {
+	width: 100%;
 	margin-bottom: 2%;
 	margin-left: 5%;
 	background-color: #eee;
+}
+
+.fac-tt {
+	width: 100%;
+	margin-bottom: 2%;
+	background-color: #eee;
+}
+
+.cancel-box {
+	width: 50%
+}
+
+.field-height {
+	height: 45px
+}
+
+.button-center {
+	margin-left: 35%;
+}
+
+.home {
+	display: inline-flex;
+	width: 100%;
+	margin-top: 20px;
+}
+
+.inbox-list {
+	margin-top: 10%;
+	list-style: none;
+}
+
+.inbox-item {
+	font-size: 12px;
+	margin-left: -30px;
+	margin-right: 5px;
+	border-bottom: 1px;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-color: black;
+	border-style: solid;
+	margin-bottom: 5px;
+}
+
+.inbox-frame {
+	width: 20%;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	background-color: #eee
+}
+
+.ri-hdiv {
+	border-bottom: 1px;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-color: black;
+	border-style: solid;
+}
+
+.ri-h {
+	text-align: center;
+	font-size: 10px;
+	font-family: sans-serif;
+	font-weight: bold;
+}
+
+.two-btn {
+	display: inline-flex;
+}
+
+.btn-wdt {
+	width: auto;
+}
+
+.table-btn{
+	font-size: small;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }

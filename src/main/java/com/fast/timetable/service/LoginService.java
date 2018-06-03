@@ -23,16 +23,11 @@ public class LoginService {
 		}
 
 	}
+	
 
-//	@Override
-//	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		 Student user = loginRepository.findByUsername(username);
-//	        if (user == null) {
-//
-//	            throw new UsernameNotFoundException(username);
-//	        }
-//	        Login login  = loginRepository.findByStudentId(user.getId());
-//	        return new CurrentUser(user,login);
-//	}
+	
+	public Login getLoginByStudentId(Long id) {
+		 return loginRepository.findByStudentId(id);
+	}
 
 }

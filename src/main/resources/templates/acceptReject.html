@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Smart Timetable Notifier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<link rel="stylesheet" th:href="@{/css/welcome.css}"
+	href="../../css/welcome.css" />
+
+</head>
+<body>
+
+	<script type="text/javascript"
+		src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<nav class="navbar navbar-inverse">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Smart Timetable Notifier</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/web/faculty/login">Home</a></li>
+					<li><a href="/web/faculty/cancelclass">Cancel a class</a></li>
+					<li><a href="/web/faculty/makupclass">Make-up Class</a></li>
+					<li class="active"><a href="#">Add Instructor/Guest</a></li>
+					<li><a href="/web/faculty/changepassword">Change Password</a></li>
+					<li><a href="/web/faculty?logout=true">Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+
+
+		<div class="row" style="margin-top: 20px">
+
+			<div class="cancel-box">
+				<form th:action="@{/web/faculty/ai/submit}"
+					th:object="${addinsPojo}" id="addinsPojo" method="post">
+					<fieldset>
+						<h3>Invitation</h3>
+
+
+						<div class="" th:text="${addInstructor}"></div>
+
+						<div class="two-btn">
+							<div th:if="${reject} == false"
+								class="button-center col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+								<div class="row">
+									<div class="btn-wdt col-xs-6 col-sm-6 col-md-6">
+										<input
+											th:formAction="@{/web/faculty/ai/reject/{id}(id=${aiId})}"
+											type="submit" class="btn btn-lg btn-primary btn-block"
+											value="Reject" />
+									</div>
+								</div>
+							</div>
+							<div th:if="${reject} == true"
+								class="button-center col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+								<div class="row">
+									<div class="btn-wdt col-xs-6 col-sm-6 col-md-6">
+										<input
+											th:formAction="@{/web/faculty/ai/reject/{id}(id=${aiId})}"
+											type="submit" class="btn btn-lg btn-primary btn-block"
+											value="Reject" th:disabled="disabled"/>
+									</div>
+								</div>
+							</div>
+							<div th:if="${accept} == false"
+								class="button-center col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+								<div class="row">
+									<div class="btn-wdt  col-xs-6 col-sm-6 col-md-6">
+										<input
+											th:formAction="@{/web/faculty/ai/accept/{id}(id=${aiId})}"
+											type="submit" class="btn btn-lg btn-primary btn-block"
+											value="Accept" />
+									</div>
+								</div>
+							</div>
+							<div th:if="${accept} == true"
+								class="button-center col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+								<div class="row">
+									<div class="btn-wdt  col-xs-6 col-sm-6 col-md-6">
+										<input
+											th:formAction="@{/web/faculty/ai/accept/{id}(id=${aiId})}"
+											type="submit" class="btn btn-lg btn-primary btn-block"
+											value="Accept" th:disabled="disabled"/>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</fieldset>
+				</form>
+			</div>
+		</div>
+
+	</div>
+	<footer>
+		<!-- this is footer -->
+		<!-- © 2017 Smart Timetable Notifier  -->
+
+	</footer>
+
+</body>
+</html>

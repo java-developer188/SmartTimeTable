@@ -21,6 +21,9 @@ public class Login {
 	
 	@OneToOne
 	private Student student;
+	
+	@OneToOne
+	private Teacher teacher;
 
 	public Long getId() {
 		return id;
@@ -52,6 +55,16 @@ public class Login {
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+	
+	
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
 	}
 
 	public String getToken() {

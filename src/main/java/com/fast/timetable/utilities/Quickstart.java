@@ -91,7 +91,6 @@ public class Quickstart {
 		// Build a new authorized API client service.
 		Drive service = getDriveService();
 
-		// Print the names and IDs for up to 10 files.
 		FileList result = service.files().list().setFields("nextPageToken, files(id, name)").execute();
 		List<File> files = result.getFiles();
 		if (files == null || files.size() == 0) {
@@ -102,7 +101,7 @@ public class Quickstart {
 				for (File file : files) {
 					if (file.getName().equals(target)) {
 						System.out.printf("%s (%s)\n", file.getName(), file.getId());
-						return v+"$$" + url + file.getId();
+						return v+"#" + url + file.getId();
 					}
 				}
 			}

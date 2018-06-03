@@ -13,15 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fast.timetable.AutomaticFetcher;
 import com.fast.timetable.DaySheetParser;
-import com.fast.timetable.entity.Course;
-import com.fast.timetable.entity.CourseSectionTeacher;
 import com.fast.timetable.entity.Student;
 import com.fast.timetable.entity.Teacher;
-import com.fast.timetable.entity.TimeTable;
 import com.fast.timetable.repository.CourseRepository;
 import com.fast.timetable.repository.CourseSectionTeacherRepository;
 import com.fast.timetable.repository.TeacherRepository;
 import com.fast.timetable.repository.TimeTableRepository;
+import com.fast.timetable.service.CourseSectionTeacherService;
 import com.fast.timetable.service.CourseService;
 import com.fast.timetable.service.SectionService;
 import com.fast.timetable.service.StudentService;
@@ -62,6 +60,9 @@ public class TimetableController {
 	SectionService sectionService;
 
 	@Autowired
+	CourseSectionTeacherService courseSectionTeacherService;
+	
+	@Autowired
 	ClassNotificationService classNotificationService;
 	
 	boolean onlyOnce = true;
@@ -98,8 +99,24 @@ public class TimetableController {
 //			// TODO Auto-generated catch block
 //			return "JSON Processing error";
 //		}
-		classNotificationService.startExecutionAt(15, 05, 0);
+		//notificaion test
+		//classNotificationService.startExecutionAt(15, 05, 0);
+		
+		// auto registration test
+		studentService.populateStudent();
 		return "";
+	}
+	
+	/**
+	 * Controller to call Category page service.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/test/seating", method = RequestMethod.GET)
+	public String testSeating() {
+		return courseSectionTeacherService.populateSeating();
 	}
 
 	/**

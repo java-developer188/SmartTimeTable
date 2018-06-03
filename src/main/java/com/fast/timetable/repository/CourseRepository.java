@@ -13,6 +13,8 @@ public interface CourseRepository extends CrudRepository<Course, Long> {
 	public Course findByFullName(String courseFullName);
 	
 	
+	public Course findByCode(String code);
+	
 	public List<Course> findByBatch(int batch);
 
 }

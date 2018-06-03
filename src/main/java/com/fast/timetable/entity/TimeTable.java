@@ -6,6 +6,8 @@ import javax.persistence.*;
 @Table(name = "time_table")
 public class TimeTable implements java.io.Serializable {
 
+	private static final long serialVersionUID = 8056211306145074607L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

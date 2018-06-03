@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,12 +30,17 @@ import com.fast.timetable.DataManager;
 import com.fast.timetable.TeacherDataManager;
 import com.fast.timetable.entity.Course;
 import com.fast.timetable.entity.CourseTeacher;
+import com.fast.timetable.entity.Login;
+import com.fast.timetable.entity.Student;
 import com.fast.timetable.entity.Teacher;
 import com.fast.timetable.repository.CourseRepository;
 import com.fast.timetable.repository.CourseSectionTeacherRepository;
 import com.fast.timetable.repository.CourseTeacherRepository;
+import com.fast.timetable.repository.LoginRepository;
+import com.fast.timetable.repository.RoomLocationRepository;
 import com.fast.timetable.repository.TeacherRepository;
 import com.fast.timetable.repository.TimeTableRepository;
+import com.fast.timetable.utilities.EncryptorDecryptor;
 
 @Service
 public class TeacherService {
@@ -48,7 +55,6 @@ public class TeacherService {
 	protected String fileName;// "BSCS-Spring-2017-Timetable-V5.xlsx";
 	protected Properties prop = new Properties();
 
-
 	@Autowired
 	CourseRepository courseRepository;
 
@@ -59,10 +65,16 @@ public class TeacherService {
 	TeacherRepository teacherRepository;
 
 	@Autowired
+	LoginRepository loginRepository;
+
+	@Autowired
 	TimeTableRepository timeTableRepository;
 
 	@Autowired
 	CourseSectionTeacherRepository courseSectionTeacherRepository;
+
+	@Autowired
+	RoomLocationRepository roomLocationRepository;
 
 	public void save(List<Teacher> list) {
 		teacherRepository.save(list);
@@ -87,6 +99,7 @@ public class TeacherService {
 			map.put("room", obj[2].toString());
 			map.put("course", obj[3].toString());
 			map.put("section", obj[4].toString());
+			map.put("location", roomLocationRepository.getLocationByRoom(obj[2].toString()));
 			list.add(map);
 		}
 		return list;
@@ -126,6 +139,12 @@ public class TeacherService {
 							teacher = new Teacher();
 							teacher.setName(capitalize);
 							teacher = teacherRepository.save(teacher);
+							Login login = createLogin(teacher);
+							if (login != null) {
+								System.out.println("Login account created with username: " + login.getUsername());
+								Logger.getGlobal().log(Level.FINE,
+										"Login account created with username: " + login.getUsername());
+							}
 						}
 						Course course = courseRepository.findByFullName(courseName);
 						if (course != null) {
@@ -180,6 +199,52 @@ public class TeacherService {
 			Logger.getGlobal().log(Level.SEVERE, "Sheet not found at index: " + sheetIndex);
 		}
 		return sheet;
+	}
+
+	public Teacher login(String username, String password) {
+		String encpwd = EncryptorDecryptor.encryptDecrypt(password);
+		Teacher teacher = loginRepository.findTeacherByUsernameAndPassword(username, encpwd);
+		return teacher;
+	}
+	
+	public boolean changePassword(String username, String newPassword) {
+		Login login = loginRepository.findByUsername(username);
+		if (login != null) {
+			String encpwd = EncryptorDecryptor.encryptDecrypt(newPassword);
+			login.setPassword(encpwd);
+			loginRepository.save(login);
+			return true;
+		}
+		return false;
+	}
+
+	private Login createLogin(Teacher teacher) {
+		Login login = new Login();
+		try {
+			if (teacher != null) {
+				for (String username : teacher.getName().split(" ")) {
+					if (username.length() > 3) {
+						login.setTeacher(teacher);
+						login = loginRepository.save(login);
+						login.setUsername(username.toLowerCase()+login.getId());
+						login.setPassword(EncryptorDecryptor.encryptDecrypt(login.getUsername()));
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			Logger.getGlobal().log(Level.SEVERE, "Error creating login fro teacher:" + teacher.getName());
+		}
+		return login;
+	}
+	
+	public List<Teacher> findAllForAddInstructor(){
+		List<Teacher> list = IterableUtils.toList(teacherRepository.findAll());
+		Teacher nullTeacher = new Teacher();
+		nullTeacher.setId(-1L);
+		nullTeacher.setName("Select");
+		list.add(0, nullTeacher);
+		return list;
 	}
 
 	private String getFileName() {

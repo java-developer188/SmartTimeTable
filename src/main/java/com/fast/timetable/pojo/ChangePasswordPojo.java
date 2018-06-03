@@ -4,11 +4,22 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fast.timetable.entity.Teacher;
+import com.fast.timetable.service.TeacherService;
+
 public class ChangePasswordPojo {
 	
+	@Autowired
+	TeacherService teacherService;
+	
 	@NotNull(message = "UserName cannot be empty")
-	@Size(min=6, max= 20 , message = "UserName must be between 6 and 20 characters")
+	@Size(min=2, max= 20 , message = "UserName must be between 2 and 20 characters")
 	private String userName;
+	
+	private String oldPassword;
 	
 	@NotNull(message = "Password cannot be empty")
 	@Size(min= 8 , message = "Password must have at least 8 characters")
@@ -31,6 +42,17 @@ public class ChangePasswordPojo {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	
+
+	public String getOldPassword() {
+		return oldPassword;
+	}
+
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
 	}
 
 

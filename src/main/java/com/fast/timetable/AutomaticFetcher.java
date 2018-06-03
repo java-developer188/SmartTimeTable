@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.fast.timetable.pojo.RegistrationPojo;
+import com.fast.timetable.utilities.Quickstart;
 //import com.fast.timetable.utilities.Quickstart;
 
 public class AutomaticFetcher {
@@ -41,6 +42,7 @@ public class AutomaticFetcher {
 	private boolean onlyOnce = true;
 	private final String URL = "http://localhost:8088/";
 	public static int version = 1;
+	public static int oldVersion = 1;
 
 	public AutomaticFetcher() {
 		try {
@@ -71,6 +73,7 @@ public class AutomaticFetcher {
 		totalInterval = Integer.parseInt(prop.getProperty("Total_Interval"));
 		System.out.println("Total Intervals :" + totalInterval);
 		version = prop.getProperty("TimeTable_Version")!= null ? Integer.parseInt(prop.getProperty("TimeTable_Version")) : 1 ;
+		oldVersion = version;
 		generateFetcher().run();
 	}
 
@@ -90,14 +93,14 @@ public class AutomaticFetcher {
 					} 
 					else if (prop.getProperty(VERSIONING) != null
 							&& prop.getProperty(VERSIONING).equals(VERSIONING_FAST)) {
-//						String fileName =  prop.getProperty("TimeTable_Filename")!= null ? prop.getProperty("TimeTable_Filename") : "BSCS_v";
-//						String extension =  prop.getProperty("TimeTable_FileType")!= null ? prop.getProperty("TimeTable_FileType") : ".xlsx";
-//						String[] versionAndFile = Quickstart.getVersionAndFileUrl(fileName,version,extension).split("$$");
-//						version =  Integer.parseInt(versionAndFile[0]);
-//						fromFile = versionAndFile[1];
+						String fileName =  prop.getProperty("TimeTable_Filename")!= null ? prop.getProperty("TimeTable_Filename") : "BSCS_v";
+						String extension =  prop.getProperty("TimeTable_FileType")!= null ? prop.getProperty("TimeTable_FileType") : ".xlsx";
+						String[] versionAndFile = Quickstart.getVersionAndFileUrl(fileName,version,extension).split("#");
+						version =  Integer.parseInt(versionAndFile[0]);
+						fromFile = versionAndFile[1];
 					}
 					// connectionTimeout, readTimeout = 10 seconds
-
+					
 					if (onlyOnce) {
 						// initialize system
 						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
@@ -105,13 +108,27 @@ public class AutomaticFetcher {
 						String url = URL + "init?value=true";
 						callController(url, null);
 						System.out.println("initialize system");
+						oldVersion = version;
 					} else {
-						// regenerate timetable only
-						shellCommand.executePartialSchemaScript();
-						FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
-						String url = URL + "partial";
-						callController(url, null);
-						System.out.println("regenerate timetable only");
+						if (prop.getProperty(VERSIONING) != null
+								&& prop.getProperty(VERSIONING).equals(VERSIONING_FAST)) {
+							if (version > oldVersion) {
+								// regenerate timetable only if it is a  new version
+								oldVersion = version;
+								shellCommand.executePartialSchemaScript();
+								FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
+								String url = URL + "partial";
+								callController(url, null);
+								System.out.println("regenerate timetable only");
+							}
+						} else {
+							// regenerate timetable every time 
+							shellCommand.executePartialSchemaScript();
+							FileUtils.copyURLToFile(new URL(fromFile), new File(toFile), 10000, 10000);
+							String url = URL + "partial";
+							callController(url, null);
+							System.out.println("regenerate timetable only");
+						}
 					}
 
 					changeReadInterval();

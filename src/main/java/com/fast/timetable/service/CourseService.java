@@ -101,8 +101,10 @@ public class CourseService {
 						course.setLab(true);
 					}
 					System.out.println(course.getFullName());
-			
-					courseRepository.save(course);
+					if (courseRepository.findByFullName(course.getFullName()) == null) {
+						System.out.println("New Course Found");
+						courseRepository.save(course);
+					}
 				}
 			}
 		}

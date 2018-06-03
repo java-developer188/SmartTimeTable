@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,11 +21,15 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fast.timetable.entity.CourseSectionTeacher;
 import com.fast.timetable.entity.Login;
 import com.fast.timetable.entity.Student;
+import com.fast.timetable.entity.Teacher;
 import com.fast.timetable.pojo.ChangePasswordPojo;
 import com.fast.timetable.pojo.RegistrationPojo;
+import com.fast.timetable.service.CSTStudentService;
 import com.fast.timetable.service.CourseSectionTeacherService;
 import com.fast.timetable.service.RegistrationService;
+import com.fast.timetable.service.SeatingService;
 import com.fast.timetable.service.StudentService;
+import com.fast.timetable.utilities.EncryptorDecryptor;
 
 @Controller
 @RequestMapping(path = "/web")
@@ -38,6 +44,12 @@ public class WebController {
 	@Autowired
 	RegistrationService registrationService;
 
+	@Autowired
+	CSTStudentService cstStudentService;
+
+	@Autowired
+	SeatingService seatingService;
+
 	/**
 	 * Controller to call login from web page service.
 	 * 
@@ -46,15 +58,22 @@ public class WebController {
 	 * @return
 	 */
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-	public String defaultPage(@ModelAttribute("attr") String param, Model model) {
+	public String defaultPage(@ModelAttribute("logout") String logout, @ModelAttribute("attr") String param,
+			Model model, HttpSession httpSession) {
+		if (logout != null && logout.equals("true")) {
+			httpSession.removeAttribute("user");
+			httpSession.removeAttribute("username");
+		}
 		if (param != null && !param.isEmpty()) {
-			String decrypt = encryptDecrypt((String) param);
-			long id = Long.parseLong(decrypt);
-			if (id > 0) {
-				Student student = studentService.getStudentById(id);
-				if (student != null) {
-					model.addAttribute("registrationSuccess", true);
-					return "login";
+			if (!param.equals("-1")) {
+				String decrypt = EncryptorDecryptor.encryptDecrypt((String) param);
+				long id = Long.parseLong(decrypt);
+				if (id > 0) {
+					Student student = studentService.getStudentById(id);
+					if (student != null) {
+						model.addAttribute("registrationSuccess", true);
+						return "login";
+					}
 				}
 			} else {
 				model.addAttribute("registrationFailed", true);
@@ -72,39 +91,54 @@ public class WebController {
 	 * @return
 	 */
 	@RequestMapping(path = "/login", method = { RequestMethod.GET, RequestMethod.POST })
-	public String login(@ModelAttribute Login login, Model model) {
-		long entry = System.currentTimeMillis();
-		String username = "", password = "";
-		if (login.getUsername() != null) {
-			username = login.getUsername();
-			password = login.getPassword();
+	public String login(@ModelAttribute Login login, Model model, HttpSession httpSession) {
+		if (httpSession.getAttribute("user") != null && httpSession.getAttribute("user") instanceof Student) {
+			Student student = (Student) httpSession.getAttribute("user");
+			return findStudent(model, student);
+		} else {
+			long entry = System.currentTimeMillis();
+			String username = "", password = "";
+			if (login.getUsername() != null) {
+				username = login.getUsername();
+				password = login.getPassword();
 
-			Student student = studentService.login(username, password);
-			if (student != null) {
-				List<Object> timetable = new ArrayList<>();
-				for (HashMap<String, String> map : studentService.getStudentTimeTable(student.getId())) {
-
-					Object record = new Object() {
-						public String day = map.get("day");
-						public String time = map.get("time");
-						public String room = map.get("room");
-						public String course = map.get("course");
-						public String section = map.get("section");
-						public String teacher = map.get("teacher");
-					};
-					timetable.add(record);
+				Student student = studentService.login(username, password);
+				if (student != null) {
+					String page = findStudent(model, student);
+					httpSession.setMaxInactiveInterval(900);
+					httpSession.setAttribute("user", student);
+					httpSession.setAttribute("username", login.getUsername());
+					return page;
+				} else {
+					model.addAttribute("loginfail", true);
+					return "login";
 				}
-				model.addAttribute("timetable", timetable);
-				model.addAttribute("student", student);
-				return "welcome";
 			} else {
-				model.addAttribute("loginfail", true);
 				return "login";
 			}
-		} else {
-			return "login";
+		}
+	}
+
+	private String findStudent(Model model, Student student) {
+		List<Object> timetable = new ArrayList<>();
+		for (HashMap<String, String> map : studentService.getStudentTimeTable(student.getId())) {
+
+			Object record = new Object() {
+				public String day = map.get("day");
+				public String time = map.get("time");
+				public String room = map.get("room");
+				public String course = map.get("course");
+				public String section = map.get("section");
+				public String teacher = map.get("teacher");
+				public String location = map.get("location");
+
+			};
+			timetable.add(record);
 		}
 
+		model.addAttribute("timetable", timetable);
+		model.addAttribute("student", student);
+		return "welcome";
 	}
 
 	/**
@@ -183,13 +217,13 @@ public class WebController {
 
 		Student student = registrationService.register(registrationPojo);
 		if (student != null) {
-			model.addAttribute("attr", encryptDecrypt(Long.toString(student.getId())));
+			model.addAttribute("attr", EncryptorDecryptor.encryptDecrypt(Long.toString(student.getId())));
 		} else {
 			model.addAttribute("attr", "-1");
 		}
 		return new ModelAndView("redirect:/web", model);
 	}
-	
+
 	/**
 	 * Controller to call change password page.
 	 * 
@@ -197,12 +231,14 @@ public class WebController {
 	 * @param httpreq
 	 * @return
 	 */
-	@RequestMapping(path = "/changepassword", method = { RequestMethod.GET})
-	public String changepassword(Model model) {
-		return "changepassword";
+	@RequestMapping(path = "/changepassword", method = { RequestMethod.GET })
+	public String changepassword(Model model, HttpSession httpSession) {
+		if (httpSession.getAttribute("user") != null && httpSession.getAttribute("user") instanceof Student)
+			return "changepassword";
+		else
+			return "login";
 	}
-	
-	
+
 	/**
 	 * Controller to call change password page.
 	 * 
@@ -210,59 +246,123 @@ public class WebController {
 	 * @param httpreq
 	 * @return
 	 */
-	@RequestMapping(path = "/changepassword", method = {RequestMethod.POST })
-	public  ModelAndView changepassword(
-			@ModelAttribute("changepasswordPojo") @Valid ChangePasswordPojo changePasswordPojo, BindingResult bindingResult,
-			ModelMap model) { 
-				boolean validation = true;
-				if (bindingResult.hasErrors()) {
-					ModelAndView mav = new ModelAndView();
-					if (bindingResult.hasFieldErrors("userName")) {
-						model.addAttribute("userNameError", bindingResult.getFieldError("userName").getDefaultMessage());
-						validation = false;
-					}
-					if (bindingResult.hasFieldErrors("newPassword")) {
-						model.addAttribute("newPasswordError", bindingResult.getFieldError("newPassword").getDefaultMessage());
-						validation = false;
-					}
-					if (bindingResult.hasFieldErrors("confirmPassword")) {
-						model.addAttribute("confirmPasswordError", bindingResult.getFieldError("confirmPassword").getDefaultMessage());
-						validation = false;
-					}
-					if (bindingResult.hasFieldErrors("conditionTrue")) {
-						model.addAttribute("isConditionTrue", bindingResult.getFieldError("conditionTrue").getDefaultMessage());
-						validation = false;
-					}
-					if (!validation) {
-						model.addAttribute("validation", false);
-						model.addAttribute("userName", changePasswordPojo.getUserName());
-						model.addAttribute("newPassword", "");
-						model.addAttribute("confirmPassword", "");
-					}
-					mav.addObject("changePasswordPojo", changePasswordPojo);
-					mav.setViewName("changepassword");
-					return mav;
-				}
-
-				if (studentService.changePassword(changePasswordPojo.getUserName(), changePasswordPojo.getNewPassword())) {
-					model.addAttribute("changePasswordSuccess", true);
-				} else {
-					model.addAttribute("changePasswordError", true);
-				}
-				return new ModelAndView("changepassword", model);
+	@RequestMapping(path = "/seating", method = { RequestMethod.GET })
+	public String seating(Model model, HttpSession httpSession) {
+		if (httpSession.getAttribute("user") != null && httpSession.getAttribute("user") instanceof Student) {
+			Student student = (Student) httpSession.getAttribute("user");
+			model.addAttribute("seating", seatingService.getSeating(student.getId()));
+			return "seating";
+		} else
+			return "login";
 	}
-	
 
-	private String encryptDecrypt(String input) {
-		char[] key = { 's', 'm', 'a', 'r', 't' }; // Can be any chars, and any
-													// length array
-		StringBuilder output = new StringBuilder();
+	/**
+	 * Controller to call change password page.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/attendance", method = { RequestMethod.GET })
+	public String attendance(Model model, HttpSession httpSession) {
+		if (httpSession.getAttribute("user") != null && httpSession.getAttribute("user") instanceof Student) {
+			Student student = (Student) httpSession.getAttribute("user");
+			model.addAttribute("attendance", cstStudentService.attendance(student.getId()));
+			return "attendance";
+		} else
+			return "login";
+	}
 
-		for (int i = 0; i < input.length(); i++) {
-			output.append((char) (input.charAt(i) ^ key[i % key.length]));
+	/**
+	 * Controller to mark attendance.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/attendance/mark/{id}", method = { RequestMethod.POST })
+	public ModelAndView attendanceMark(@PathVariable Long id, ModelMap model, HttpSession httpSession) {
+		if (httpSession.getAttribute("user") != null && httpSession.getAttribute("user") instanceof Student) {
+			Student student = (Student) httpSession.getAttribute("user");
+			if (id != null && id > 0) {
+				model.addAttribute("attendance",cstStudentService.markAttendance(id));
+				return new ModelAndView("redirect:/web/attendance", model);
+			}
+			model.addAttribute("attendance", cstStudentService.attendance(student.getId()));
+			return new ModelAndView("redirect:/web/attendance", model);
+		} else{
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("login");
+			return mav;
 		}
+	}
 
-		return output.toString();
+	/**
+	 * Controller to call change password page.
+	 * 
+	 * @param request
+	 * @param httpreq
+	 * @return
+	 */
+	@RequestMapping(path = "/changepassword", method = { RequestMethod.POST })
+	public ModelAndView changepassword(
+			@ModelAttribute("changepasswordPojo") @Valid ChangePasswordPojo changePasswordPojo,
+			BindingResult bindingResult, ModelMap model) {
+		boolean validation = true;
+		if (bindingResult.hasErrors()) {
+			ModelAndView mav = new ModelAndView();
+			if (bindingResult.hasFieldErrors("userName")) {
+				model.addAttribute("userNameError", bindingResult.getFieldError("userName").getDefaultMessage());
+				validation = false;
+			}
+			if (studentService.login(changePasswordPojo.getUserName(), changePasswordPojo.getOldPassword()) == null) {
+				model.addAttribute("oldPasswordError", "Old Password invalid");
+				validation = false;
+			}
+			if (bindingResult.hasFieldErrors("newPassword")) {
+				model.addAttribute("newPasswordError", bindingResult.getFieldError("newPassword").getDefaultMessage());
+				validation = false;
+			}
+			if (bindingResult.hasFieldErrors("confirmPassword")) {
+				model.addAttribute("confirmPasswordError",
+						bindingResult.getFieldError("confirmPassword").getDefaultMessage());
+				validation = false;
+			}
+			if (bindingResult.hasFieldErrors("conditionTrue")) {
+				model.addAttribute("isConditionTrue", bindingResult.getFieldError("conditionTrue").getDefaultMessage());
+				validation = false;
+			}
+			if (!validation) {
+				setFieldsForError(changePasswordPojo, model);
+			}
+			mav.addObject("changePasswordPojo", changePasswordPojo);
+			mav.setViewName("changepassword");
+			return mav;
+		} else {
+			ModelAndView mav = new ModelAndView();
+			if (studentService.login(changePasswordPojo.getUserName(), changePasswordPojo.getOldPassword()) == null) {
+				model.addAttribute("oldPasswordError", "Old Password invalid");
+				setFieldsForError(changePasswordPojo, model);
+				mav.addObject("changePasswordPojo", changePasswordPojo);
+				mav.setViewName("facultychangepassword");
+				return mav;
+			}
+
+			if (studentService.changePassword(changePasswordPojo.getUserName(), changePasswordPojo.getNewPassword())) {
+				model.addAttribute("changePasswordSuccess", true);
+			} else {
+				model.addAttribute("changePasswordError", true);
+			}
+			return new ModelAndView("changepassword", model);
+		}
+	}
+
+	private void setFieldsForError(ChangePasswordPojo changePasswordPojo, ModelMap model) {
+		model.addAttribute("validation", false);
+		model.addAttribute("userName", changePasswordPojo.getUserName());
+		model.addAttribute("oldPassword", "");
+		model.addAttribute("newPassword", "");
+		model.addAttribute("confirmPassword", "");
 	}
 
 }

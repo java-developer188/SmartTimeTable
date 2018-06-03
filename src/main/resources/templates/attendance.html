@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Smart Timetable Notifier</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<link rel="stylesheet" th:href="@{/css/welcome.css}"
+	href="../../css/welcome.css" />
+
+</head>
+<body>
+
+	<script type="text/javascript"
+		src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<nav class="navbar navbar-inverse">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Smart Timetable Notifier</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/web/login">Home</a></li>
+					<li class="active"><a href="#">Attendance</a></li>
+					<li><a href="/web/seating">Exam Seating</a></li>
+					<li><a href="/web/changepassword">Change Password</a></li>
+					<li><a href="/web?logout=true">Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+
+
+	<div class="container">
+		<div
+			class="timetable col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+			<form th:object="${attendance}" method="post">
+				<fieldset>
+					<div class="head">
+						<h3>Course Attendance</h3>
+					</div>
+					<div class="row">
+						<table id="attendance" class="tt">
+							<thead>
+								<tr>
+									<th>Course</th>
+									<th>Mark Attendance</th>
+									<th>Classes Attended</th>
+									<th>Percentage</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="record : ${attendance}">
+									<td th:text="${{record.course}}"></td>
+									<td th:if="${record.mark}">
+
+										<div class="table-btn btn-wdt col-xs-6 col-sm-6 col-md-6">
+											<input
+												th:formAction="@{/web/attendance/mark/{id}(id=${record.id})}"
+												type="submit" class="btn btn-lg btn-primary btn-block"
+												value="Present" />
+										</div>
+
+									</td>
+									<td th:if="!${record.mark}">
+
+										<div class="table-btn btn-wdt col-xs-6 col-sm-6 col-md-6">
+											<input
+												th:formAction="@{/web/attendance/mark/{id}(id=${record.id})}"
+												type="submit" class="btn btn-lg btn-primary btn-block"
+												value="Present" th:disabled="disabled"/>
+										</div>
+
+									</td>
+									<td th:text="${{record.attended}}"></td>
+									<td th:text="${{record.percentage}}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<footer>
+		<!-- this is footer -->
+		<!-- © 2017 Smart Timetable Notifier  -->
+
+	</footer>
+
+</body>
+</html>

@@ -27,7 +27,6 @@
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#">Login</a></li>
 					<li><a href="/web/register">Register</a></li>
-					<li><a href="/web/changepassword">Change Password</a></li>
 				</ul>
 			</div>
 		</div>
@@ -112,7 +111,7 @@
 			<br />
 
 			<div align="center" th:if="${loginfail}">
-				<p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
+				<p style="font-size: 20; color: #FF1C19;">Invalid Username/Password</p>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block" name="Submit"
 				value="Login" type="Submit" th:text="Login"></button>
